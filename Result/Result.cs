@@ -1,11 +1,11 @@
-﻿using Result.Enums;
-using Result.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Wookashi.Common.Result.Enums;
+using Wookashi.Common.Result.Models;
 
-namespace Result
+namespace Wookashi.Common.Result
 {
     public class Result
     {

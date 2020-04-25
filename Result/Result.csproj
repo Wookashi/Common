@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard1.0</TargetFramework>
+    <AssemblyName>Wookashi.Common.Result</AssemblyName>
+    <RootNamespace>Wookashi.Common.Result</RootNamespace>
   </PropertyGroup>
 
 </Project>

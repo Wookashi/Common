@@ -1,7 +1,7 @@
 using System;
 using Xunit;
 
-namespace Result.Tests.Unit
+namespace Wookashi.Common.Result.Tests.Unit
 {
     public class UnitTest1
     {

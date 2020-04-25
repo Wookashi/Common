@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+        <id>Wookashi.ExtraText</id>
+        <version>0.9.0.0</version>
+        <icon>icon.png</icon>
+        <authors>Lucas Hryciuk</authors>
+        <owners>Wookashi</owners>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <license type="expression">MIT</license>
+        <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
+        <description>Simple package containing result class. Class can be generic, containing another class. Moreover result use statuses.
+        </description>
+        <releaseNotes>First package edition</releaseNotes>
+        <copyright>Copyright ©2020 Lucas Hryciuk</copyright>
+        <tags>result status simple resulthelper</tags>
+        <repository type="git" url="https://github.com/Wookashi/Wookashi.ExtraText.git" branch="master"/>
+        <dependencies>
+            <group targetFramework=".NETStandard1.0"/>
+        </dependencies>
+    </metadata>
+    <files>
+        <file src="bin\Release\netstandard1.0\Wookashi.Common.Result.dll" target="lib\netstandard1.0"/>
+        <file src="Images\icon.png" target="icon.png"/>
+    </files>
+</package>

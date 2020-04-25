@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Result.Enums
+﻿namespace Wookashi.Common.Result.Enums
 {
     public enum ResultStatus
     {

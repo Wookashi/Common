@@ -1,6 +1,6 @@
-﻿using Result.Enums;
+﻿using Wookashi.Common.Result.Enums;
 
-namespace Result.Models
+namespace Wookashi.Common.Result.Models
 {
     public class ResultEntry
     {
