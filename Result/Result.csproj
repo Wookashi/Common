@@ -1,9 +1,37 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard1.0</TargetFramework>
-    <AssemblyName>Wookashi.Common.Result</AssemblyName>
-    <RootNamespace>Wookashi.Common.Result</RootNamespace>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<Authors>Lukas Hryciuk</Authors>
+		<Description>Simple package containing result class.</Description>
+		<Copyright>Copyright ©2020 Lucas Hryciuk</Copyright>
+		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+		<Version>0.9.5</Version>
+		<RootNamespace>Wookashi.Common.Result</RootNamespace>
+		<AssemblyName>Wookashi.Common.Result</AssemblyName>
+		<LangVersion>latest</LangVersion>
+		<PackageIcon>icon.png</PackageIcon>
+		<PackageReleaseNotes>New version based on user's feedback. There are a lot of breaking changes, so it's uncompatible with previous one.</PackageReleaseNotes>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+		<PackageIconUrl />
+		<RepositoryUrl>https://github.com/Wookashi/Common.git</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageTags>result status simple resulthelper</PackageTags>
+	</PropertyGroup>
+
+	<Target Name="PostPackNugetDeploy" AfterTargets="Pack" Condition="'$(Configuration)' == 'Release'">
+		<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+			<NuGetSourceRelease>https://api.nuget.org/v3/index.json</NuGetSourceRelease>
+		</PropertyGroup>
+		<Exec Command="nuget push &quot;$(OutputPath)..\$(PackageId).$(PackageVersion).nupkg&quot; -Source &quot;$(NuGetSourceRelease)&quot; -Verbosity Detailed"></Exec>
+	</Target>
+
+	<ItemGroup>
+		<None Include="icon.png">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
+	</ItemGroup>
 
 </Project>

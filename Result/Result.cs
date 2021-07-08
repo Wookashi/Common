@@ -1,426 +1,142 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Wookashi.Common.Result.Abstraction;
 using Wookashi.Common.Result.Enums;
-using Wookashi.Common.Result.Models;
+using Wookashi.Common.Result.Extensions;
 
 namespace Wookashi.Common.Result
 {
-    public class Result
+    public class Result : IResult
     {
-        public readonly List<ResultEntry> Entries;
-        private readonly bool _preventDuplicates;
-
-        public long? DependentEntityId { get; private set; }
-
-        public Result()
+        #region Constructors
+        protected Result()
         {
-            Entries = new List<ResultEntry>();
-            Status = ResultStatus.Success;
+            Status = ResultStatusEnum.Success;
         }
 
-        public Result(bool preventDuplicates) : this()
+        internal Result(ResultStatusEnum status, string messageTemplate, params object[] messageVars) : base()
         {
-            _preventDuplicates = preventDuplicates;
+            Status = status;
+            MessageTemplate = messageTemplate;
+            MessageVars = messageVars;
         }
 
-        public Result(IEnumerable<ResultEntry> entries)
-        {
-            Entries = new List<ResultEntry>();
-
-            if (entries == null)
-            {
-                return;
-            }
-
-            foreach (var entry in entries)
-            {
-                AddEntry(entry);
-            }
-        }
-
-        public Result(ResultEntry entry)
-        {
-            Entries = new List<ResultEntry>();
-
-            if (entry == null)
-            {
-                return;
-            }
-
-            AddEntry(entry);
-        }
-
-        public ResultStatus Status { get; internal set; }
-
+        /// <summary>
+        /// Creates new Result with ResultStatusEnum.Sucess without any message.
+        /// </summary>
         public static Result Success => new Result();
 
         /// <summary>
-        /// Return <c>true</c> if result haven't error status
+        /// Creates new Result with ResultStatusEnum.Sucess status and message.
         /// </summary>
-        public bool Succeed => Status != ResultStatus.Error;
+        /// <param name="messageTemplate">Templlte message with parameters names</param>
+        /// <param name="messageVars">Template variable values and names</param>
+        /// <returns>Newly created result</returns>
+        public static Result SuccessWithMessage(string messageTemplate, params object[] messageVars) => new Result(ResultStatusEnum.Success, messageTemplate, messageVars);
+        /// <summary>
+        /// Creates new Result with ResultStatusEnum.Warning status and message.
+        /// </summary>
+        /// <param name="messageTemplate">Templlte message with parameters names</param>
+        /// <param name="messageVars">Template variable values and names</param>
+        /// <returns>Newly created result</returns>
+        public static Result Warning(string messageTemplate, params object[] messageVars) => new Result(ResultStatusEnum.Warning, messageTemplate, messageVars);
+        /// <summary>
+        /// Creates new Result with ResultStatusEnum.Error status and message.
+        /// </summary>
+        /// <param name="messageTemplate">Templlte message with parameters names</param>
+        /// <param name="messageVars">Template variable values and names</param>
+        /// <returns>Newly created result</returns>
+        public static Result Error(string messageTemplate, params object[] messageVars) => new Result(ResultStatusEnum.Error, messageTemplate, messageVars);
+
+        #endregion
+
+        #region Properties
+
+        public ResultStatusEnum Status { get; private set; }
+        public bool IsError => Status == ResultStatusEnum.Error;
+        public bool IsWarning => Status == ResultStatusEnum.Warning;
+        public bool IsSuccess => Status == ResultStatusEnum.Success;
+
+        public string MessageTemplate { get; private set; }
+        public object[] MessageVars { get; private set; }
+        public Exception Exception { get; private set; }
+
+        #endregion
+
+        #region Methods
 
         /// <summary>
-        /// Indicate if result have status error
+        /// Sets Exception field. You can use all System.Exception type.
         /// </summary>
-        public bool IsError => Status == ResultStatus.Error;
-
-        /// <summary>
-        /// Indicate if result have status warning
-        /// </summary>
-        public bool IsWarning => Status == ResultStatus.Warning;
-
-        /// <summary>
-        /// Return <c>true</c> if result have at least one error
-        /// </summary>
-        public bool HasErrors
+        /// <param name="exception"></param>
+        public Result SetException(Exception exception)
         {
-            get
-            {
-                return Entries.Any(x => x.Status == ResultStatus.Error);
-            }
-        }
-
-        public void SetDependentEntityId(long id)
-        {
-            DependentEntityId = id;
-        }
-
-        public static Result Error(string message, int code = 0, string memberName = null)
-        {
-            var result = new Result();
-            result.AddError(message, code, memberName);
-            return result;
-        }
-
-        public static Result Message(string message, int code = 0, string memberName = null)
-        {
-            var result = new Result();
-            result.AddMessage(message, code, memberName);
-            return result;
-        }
-
-        public static Result Warning(string message, int code = 0, string memberName = null)
-        {
-            var result = new Result();
-            result.AddWarning(message, code, memberName);
-            return result;
-        }
-
-        /// <summary>
-        /// Add more than one result in one function
-        /// </summary>
-        /// <param name="entries">Entries list (IEnumerable)</param>
-        public void AddEntries(IEnumerable<ResultEntry> entries)
-        {
-            if (entries == null)
-            {
-                return;
-            }
-
-            foreach (var entry1 in entries)
-            {
-                var entry = entry1;
-
-                if (!_preventDuplicates || !Entries.Exists(x =>
-                {
-                    if (x.Message == entry.Message && x.Code == entry.Code)
-                    {
-                        return x.Status == entry.Status;
-                    }
-
-                    return false;
-                }))
-                    AddEntry(entry);
-            }
-        }
-
-        /// <summary>
-        /// Add new entry to result entry collection
-        /// </summary>
-        /// <param name="entry">Result entry</param>
-        public void AddEntry(ResultEntry entry)
-        {
-            if (entry == null || _preventDuplicates && Entries.Exists(x =>
-            {
-                if (x.Message == entry.Message && x.Code == entry.Code)
-                {
-                    return x.Status == entry.Status;
-                }
-
-                return false;
-            }))
-                return;
-            Entries.Add(entry);
-            SetStatus(entry.Status);
-        }
-
-        /// <summary>
-        /// Add error to result entry collection. Entries cannot be duplicated.
-        /// </summary>
-        /// <param name="message">Error message</param>
-        /// <param name="code">Error code</param>
-        /// <param name="memberName">Property name (not needed)</param>
-        public void AddError(string message, int code = 0, string memberName = null)
-        {
-            if (_preventDuplicates && Entries.Exists(x =>
-            {
-                if (x.Message == message && x.Code == code)
-                {
-                    return x.Status == ResultStatus.Error;
-                }
-
-                return false;
-            }))
-                return;
-            Entries.Add(new ResultEntry(ResultStatus.Error)
-            {
-                Code = code,
-                Message = message,
-                MemberName = memberName
-            });
-
-            SetStatus(ResultStatus.Error);
-        }
-
-        /// <summary>
-        /// Add message to result entry collection. Entries cannot be duplicated.
-        /// </summary>
-        /// <param name="message">Error message</param>
-        /// <param name="code">Error code</param>
-        /// <param name="memberName">Property name (not needed)</param>
-        public void AddMessage(string message, int code = 0, string memberName = null)
-        {
-            if (_preventDuplicates && Entries.Exists(x =>
-            {
-                if (x.Message == message && x.Code == code)
-                {
-                    return x.Status == ResultStatus.Success;
-                }
-
-                return false;
-            }))
-                return;
-
-            Entries.Add(new ResultEntry(ResultStatus.Success)
-            {
-                Code = code,
-                Message = message,
-                MemberName = memberName
-            });
-
-            SetStatus(ResultStatus.Success);
-        }
-
-        /// <summary>
-        /// Add result entries from parameter result and set its status.
-        /// </summary>
-        /// <param name="result">Added Result</param>
-        public void AddResult(Result result)
-        {
-            if (result == null || result.Entries == null)
-            {
-                return;
-            }
-
-            AddEntries(result.Entries);
-            SetStatus(result.Status);
-
-            if (result.DependentEntityId.HasValue)
-            {
-                SetDependentEntityId(result.DependentEntityId.Value);
-            }
-        }
-
-        /// <summary>
-        /// Add warning to result entry collection. Entries cannot be duplicated.
-        /// </summary>
-        /// <param name="message">Error message</param>
-        /// <param name="code">Error code</param>
-        /// <param name="memberName">Property name (not needed)</param>
-        public void AddWarning(string message, int code = 0, string memberName = null)
-        {
-            if (_preventDuplicates && Entries.Exists(x =>
-            {
-                if (x.Message == message && x.Code == code)
-                {
-                    return x.Status == ResultStatus.Warning;
-                }
-
-                return false;
-            }))
-                return;
-
-            Entries.Add(new ResultEntry(ResultStatus.Warning)
-            {
-                Code = code,
-                Message = message,
-                MemberName = memberName
-            });
-
-            SetStatus(ResultStatus.Warning);
-        }
-
-        /// <summary>
-        /// Inserts entry on index 0
-        /// </summary>
-        /// <param name="entry"></param>
-        public void InsertEntry(ResultEntry entry)
-        {
-            if (entry == null || _preventDuplicates && Entries.Exists(x =>
-            {
-                if (x.Message == entry.Message && x.Code == entry.Code)
-                {
-                    return x.Status == entry.Status;
-                }
-
-                return false;
-            }))
-                return;
-            Entries.Insert(0, entry);
-
-            SetStatus(entry.Status);
-        }
-
-        /// <summary>
-        /// Sets result status to parameter status, can be use with force boolean (optional)
-        /// </summary>
-        /// <param name="status">(ResultStatus) Status to set</param>
-        /// <param name="force">(bool) force</param>
-        /// <returns>bool result of operation</returns>
-        public bool SetStatus(ResultStatus status, bool force = false)
-        {
-            if (!force && status <= Status)
-            {
-                return false;
-            }
-
-            Status = status;
-            return true;
-        }
-
-        public string ToFullString()
-        {
-            return
-                $"Status: {Status}{Environment.NewLine}---{Environment.NewLine}{ToString()}{Environment.NewLine as object}---";
-        }
-
-        public string ToGuiString(bool withStatus, bool withSubStatuses = false)
-        {
-            var stringBuilder = new StringBuilder();
-
-            if (withStatus)
-            {
-                stringBuilder.AppendLine(Status.ToString());
-            }
-
-            for (var index = 0; index < Entries.Count; ++index)
-            {
-                if (index > 0)
-                {
-                    stringBuilder.AppendLine();
-                }
-                stringBuilder.Append(Entries[index].ToGuiString(withSubStatuses));
-            }
-
-            return stringBuilder.ToString();
-        }
-
-        public string ToOneLineString()
-        {
-            var stringBuilder = new StringBuilder();
-
-            foreach (ResultEntry t in Entries)
-            {
-                stringBuilder.Append(t).Append(";");
-            }
-
-            return stringBuilder.ToString();
+            Exception = exception;
+            return this;
         }
 
         public override string ToString()
         {
-            var stringBuilder = new StringBuilder();
+            return MessageTemplateEvaluator.RenderMessage(MessageTemplate, MessageVars);
+        }
 
-            for (var index = 0; index < Entries.Count; ++index)
+        public string ToString(bool withStatus)
+        {
+            if (withStatus)
             {
-                if (index > 0)
-                {
-                    stringBuilder.AppendLine();
-                }
-
-                stringBuilder.Append(Entries[index]);
+                return $"{Status}: {this}";
             }
 
-            return stringBuilder.ToString();
+            return ToString();
         }
-    }
 
-    public class Result<T> : Result
-    {
-        public new static Result<T> Success
+        #endregion
+
+        #region Deprecated
+        //TODO ŁH 2021-14-05 To delete after new methods implementation
+
+        [Obsolete("Method is Obsolete and will be deleted in future releases")]
+        public bool IsSuccessOrWarning => Status != ResultStatusEnum.Error;
+
+        [Obsolete("Except of that you should use DataResult with Id type")]
+        public long? DependentEntityId { get; private set; }
+
+        [Obsolete("Except of that you should use DataResult with Id type")]
+        public Result SetDependentEntityId(long id)
         {
-            get
+            DependentEntityId = id;
+            return this;
+        }
+
+        [Obsolete("Except of that you should use ToString() method")]
+        public string ToGuiString(bool withStatus = false)
+        {
+            return ToString(withStatus);
+        }
+
+        [Obsolete("constructor is obsolete, use dedicated constructor: SuccessWithMessage")]
+        public static Result Message(string message, (string Name, object Value)[] messageVars = null) => new Result(ResultStatusEnum.Success, message, messageVars);
+
+        [Obsolete("AddResult is obsolete and will be deleted in future releases")]
+        public ResultsPack AddResult(Result result)
+        {
+            if (result == null)
             {
-                return new Result<T>();
-            }
-        }
-
-        public T Data { get; set; }
-
-        public Result()
-        {
-        }
-
-        public Result(bool preventDuplicates)
-          : base(preventDuplicates)
-        {
-        }
-
-        public Result(T data) : this()
-        {
-            Data = data;
-        }
-
-        public Result(ResultEntry entry) : this()
-        {
-            AddEntry(entry);
-        }
-
-        public Result(IEnumerable<ResultEntry> entries) : this()
-        {
-            AddEntries(entries);
-        }
-
-        public Result(T resultData, ResultEntry entry) : this(resultData)
-        {
-            AddEntry(entry);
-        }
-
-        /// <summary>
-        /// Add result entries from parameter result and set its status. Data will be set too.
-        /// </summary>
-        /// <param name="result">Added Result</param>
-        public void AddResult(Result<T> result)
-        {
-            if (result?.Entries == null)
-            {
-                return;
+                throw new ArgumentNullException($"{nameof(result)} nie może być nullem");
             }
 
-            AddEntries(result.Entries);
-            SetStatus(result.Status);
-            Data = result.Data;
+            var results = new List<Result>() {
+                result,
+                this
+            };
+            return new ResultsPack(results);
         }
 
-        /// <summary>
-        /// Returns <c>true</c> when result have status Sucess and data is not null.
-        /// </summary>
-        /// <returns></returns>
-        public bool IsCorrect()
-        {
-            return Status == ResultStatus.Success && Data != null;
-        }
+        [Obsolete("Method is Obsolete and will be deleted in future releases")]
+        public bool HasWarnings => IsWarning;
+        [Obsolete("Method is Obsolete and will be deleted in future releases")]
+        public bool HasErrors => IsError;
+
+        #endregion
     }
 }

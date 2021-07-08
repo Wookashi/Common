@@ -1,15 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30011.22
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31423.177
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Result", "Result\Result.csproj", "{CBEE2B54-AA26-4ACC-AE94-2AE350777A58}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Result", "Result\Result.csproj", "{CBEE2B54-AA26-4ACC-AE94-2AE350777A58}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pojects", "Pojects", "{8EA73AC8-E907-417B-BA83-EB90B2A60C94}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{207B038E-4477-4C7B-ACF0-12F964CA556A}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Result.Tests.Unit", "Result.Tests.Unit\Result.Tests.Unit.csproj", "{E4947631-2E73-4A2B-8103-B76692356F1E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Result.Tests", "Result.Tests\Result.Tests.csproj", "{E4947631-2E73-4A2B-8103-B76692356F1E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -28,10 +24,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{CBEE2B54-AA26-4ACC-AE94-2AE350777A58} = {8EA73AC8-E907-417B-BA83-EB90B2A60C94}
-		{E4947631-2E73-4A2B-8103-B76692356F1E} = {207B038E-4477-4C7B-ACF0-12F964CA556A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E071F9F5-8AE9-4CDA-AE92-C10E002D3EA4}
