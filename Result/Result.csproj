@@ -4,14 +4,14 @@
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<Authors>Lukas Hryciuk</Authors>
 		<Description>Simple package containing result class.</Description>
-		<Copyright>Copyright ©2020 Lucas Hryciuk</Copyright>
+		<Copyright>Copyright ©2020-2021 Lucas Hryciuk</Copyright>
 		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 		<Version>0.9.5</Version>
 		<RootNamespace>Wookashi.Common.Result</RootNamespace>
 		<AssemblyName>Wookashi.Common.Result</AssemblyName>
 		<LangVersion>latest</LangVersion>
 		<PackageIcon>icon.png</PackageIcon>
-		<PackageReleaseNotes>New version based on user's feedback. There are a lot of breaking changes, so it's uncompatible with previous one.</PackageReleaseNotes>
+		<PackageReleaseNotes>First final version of Result. Now Result is divided to three classes Result, DataResult and ResultsPack. Package delete all obsoletes function and break backward compatibility.</PackageReleaseNotes>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 		<PackageIconUrl />

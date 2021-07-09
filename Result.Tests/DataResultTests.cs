@@ -67,25 +67,6 @@ namespace Wookashi.Common.Result.Tests
 
         [Test]
         [Category("Unit")]
-        public void AddResult_Result_Merge()
-        {
-            // arrange
-            var firstResult = new DataResult<bool>(true);
-            var secondResult = new Result(ResultStatusEnum.Warning, "Warning", null);
-
-            // act
-            ResultsPack result = firstResult.AddResult(secondResult);
-
-            // assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(result.Results, Has.Count.EqualTo(2));
-                Assert.That(result.Results, Is.Unique);
-            });
-        }
-
-        [Test]
-        [Category("Unit")]
         [TestCase("Warning", "Warning")]
         public void ToString_WithoutParameters(string message, string expected)
         {
@@ -171,7 +152,6 @@ namespace Wookashi.Common.Result.Tests
                     result = DataResult<bool>.SuccessWithMessage(message, vars);
                     break;
             }
-
 
             // assert
             Assert.That(result.ToString(true), Is.EqualTo(expected));

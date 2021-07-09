@@ -24,7 +24,7 @@ namespace Wookashi.Common.Result
         /// <summary>
         /// Creates new Result with ResultStatusEnum.Sucess without any message.
         /// </summary>
-        public static Result Success => new Result();
+        public static Result Success => new();
 
         /// <summary>
         /// Creates new Result with ResultStatusEnum.Sucess status and message.
@@ -32,33 +32,33 @@ namespace Wookashi.Common.Result
         /// <param name="messageTemplate">Templlte message with parameters names</param>
         /// <param name="messageVars">Template variable values and names</param>
         /// <returns>Newly created result</returns>
-        public static Result SuccessWithMessage(string messageTemplate, params object[] messageVars) => new Result(ResultStatusEnum.Success, messageTemplate, messageVars);
+        public static Result SuccessWithMessage(string messageTemplate, params object[] messageVars) => new(ResultStatusEnum.Success, messageTemplate, messageVars);
         /// <summary>
         /// Creates new Result with ResultStatusEnum.Warning status and message.
         /// </summary>
         /// <param name="messageTemplate">Templlte message with parameters names</param>
         /// <param name="messageVars">Template variable values and names</param>
         /// <returns>Newly created result</returns>
-        public static Result Warning(string messageTemplate, params object[] messageVars) => new Result(ResultStatusEnum.Warning, messageTemplate, messageVars);
+        public static Result Warning(string messageTemplate, params object[] messageVars) => new(ResultStatusEnum.Warning, messageTemplate, messageVars);
         /// <summary>
         /// Creates new Result with ResultStatusEnum.Error status and message.
         /// </summary>
         /// <param name="messageTemplate">Templlte message with parameters names</param>
         /// <param name="messageVars">Template variable values and names</param>
         /// <returns>Newly created result</returns>
-        public static Result Error(string messageTemplate, params object[] messageVars) => new Result(ResultStatusEnum.Error, messageTemplate, messageVars);
+        public static Result Error(string messageTemplate, params object[] messageVars) => new(ResultStatusEnum.Error, messageTemplate, messageVars);
 
         #endregion
 
         #region Properties
 
-        public ResultStatusEnum Status { get; private set; }
+        public ResultStatusEnum Status { get; }
         public bool IsError => Status == ResultStatusEnum.Error;
         public bool IsWarning => Status == ResultStatusEnum.Warning;
         public bool IsSuccess => Status == ResultStatusEnum.Success;
 
-        public string MessageTemplate { get; private set; }
-        public object[] MessageVars { get; private set; }
+        public string MessageTemplate { get; }
+        public object[] MessageVars { get; }
         public Exception Exception { get; private set; }
 
         #endregion
@@ -89,53 +89,6 @@ namespace Wookashi.Common.Result
 
             return ToString();
         }
-
-        #endregion
-
-        #region Deprecated
-        //TODO ŁH 2021-14-05 To delete after new methods implementation
-
-        [Obsolete("Method is Obsolete and will be deleted in future releases")]
-        public bool IsSuccessOrWarning => Status != ResultStatusEnum.Error;
-
-        [Obsolete("Except of that you should use DataResult with Id type")]
-        public long? DependentEntityId { get; private set; }
-
-        [Obsolete("Except of that you should use DataResult with Id type")]
-        public Result SetDependentEntityId(long id)
-        {
-            DependentEntityId = id;
-            return this;
-        }
-
-        [Obsolete("Except of that you should use ToString() method")]
-        public string ToGuiString(bool withStatus = false)
-        {
-            return ToString(withStatus);
-        }
-
-        [Obsolete("constructor is obsolete, use dedicated constructor: SuccessWithMessage")]
-        public static Result Message(string message, (string Name, object Value)[] messageVars = null) => new Result(ResultStatusEnum.Success, message, messageVars);
-
-        [Obsolete("AddResult is obsolete and will be deleted in future releases")]
-        public ResultsPack AddResult(Result result)
-        {
-            if (result == null)
-            {
-                throw new ArgumentNullException($"{nameof(result)} nie może być nullem");
-            }
-
-            var results = new List<Result>() {
-                result,
-                this
-            };
-            return new ResultsPack(results);
-        }
-
-        [Obsolete("Method is Obsolete and will be deleted in future releases")]
-        public bool HasWarnings => IsWarning;
-        [Obsolete("Method is Obsolete and will be deleted in future releases")]
-        public bool HasErrors => IsError;
 
         #endregion
     }

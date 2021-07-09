@@ -7,32 +7,12 @@ namespace Wookashi.Common.Result.Tests
     [TestFixture]
     public class ResultTests
     {
-
-        [Test]
-        [Category("Unit")]
-        public void AddResult_Result_Merge()
-        {
-            // arrange
-            var firstResult = new Result(ResultStatusEnum.Success, "Success", null);
-            var secondResult = new Result(ResultStatusEnum.Warning, "Warning", null);
-
-            // act
-            var resPack = firstResult.AddResult(secondResult);
-
-            // assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(resPack.Results, Has.Count.EqualTo(2));
-                Assert.That(resPack.Results, Is.Unique);
-            });
-        }
-
         [Test]
         [Category("Unit")]
         public void Constructor_CreatesResultWithErrorEntry()
         {
             // arrange
-            var message = "Error";
+            const string message = "Error";
 
             // act
             var result = Result.Error(message);
@@ -144,7 +124,7 @@ namespace Wookashi.Common.Result.Tests
         public void Message_CreatesResultWithMessageEntry()
         {
             // arrange
-            var message = "Informacja";
+            const string message = "Informacja";
 
             // act
             var result = Result.SuccessWithMessage(message);
@@ -163,7 +143,7 @@ namespace Wookashi.Common.Result.Tests
         public void Warning_CreatesResultWithWarningEntry()
         {
             // arrange
-            var message = "Warning";
+            const string message = "Warning";
 
             // act
             var result = Result.Warning(message);
@@ -248,7 +228,6 @@ namespace Wookashi.Common.Result.Tests
             expected = $"{status}: {expected}";
             Result result;
 
-
             // act
             switch (status)
             {
@@ -265,7 +244,6 @@ namespace Wookashi.Common.Result.Tests
                     result = Result.SuccessWithMessage(message, vals);
                     break;
             }
-
 
             // assert
             Assert.That(result.ToString(true), Is.EqualTo(expected));
